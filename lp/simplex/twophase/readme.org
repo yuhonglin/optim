@@ -1,0 +1,8 @@
+* BOUNDLP.hpp
+  Solve the following problem
+  
+              max c'x
+	     s.t. A*x = b
+                  lb<= x <=ub
+	       
+              
