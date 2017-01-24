@@ -10,6 +10,9 @@ diff = inf*ones(nTest,1);
 
 opt = optimset('Display', 'off');
 
+dwork      = zeros((10+10)*(10+4)+10,1);
+iwork      = zeros((10+10)*3+10,1);
+
 i = 1;
 while i <= nTest
     size = 6;
@@ -32,7 +35,7 @@ while i <= nTest
         continue
     end
     
-    [x1,fval1,inform1] = mxbdlp(c,Aeq,beq,lb,ub);
+    [x1,fval1,inform1] = mxbdlpext(c,Aeq,beq,lb,ub,dwork,iwork);
 
     diff(i) = x1'*c-x2'*c;
 
@@ -97,14 +100,17 @@ toc
 disp('Time used by mxbdlp:')
 tic
 for i = 1:nTest
-    % c = c_list{i};
-    % Aeq = Aeq_list{i};
-    % beq = beq_list{i};
-    % lb  = lb_list{i};
-    % ub  = ub_list{i};
+    %c = c_list{i};
+    %Aeq = Aeq_list{i};
+    %beq = beq_list{i};
+    %lb  = lb_list{i};
+    %ub  = ub_list{i};
     %save 'tmp.mat' i c Aeq beq lb ub
     %pause(0.00001)
-    x1 = mxbdlp(c_list{i},Aeq_list{i},beq_list{i},lb_list{i},ub_list{i});
+    %i
+    %save 'data.mat' c Aeq beq lb ub
+    x = mxbdlpext(c_list{i},Aeq_list{i},beq_list{i},lb_list{i},ub_list{i}, ...
+               dwork, iwork);
     %[x1,fval1,inform1] = mxbdlp(c,Aeq,beq,lb,ub);
 end
 toc

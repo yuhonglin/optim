@@ -37,5 +37,7 @@ int main(int argc, char *argv[])
   cout << endl;
   cout << "obj    = " << obj << endl;
   cout << "inform = " << inform << endl;
+
+  delete[] x;
   return 0;
 }

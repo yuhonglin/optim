@@ -29,10 +29,21 @@ namespace simplex {
       degenerate = false;
     }
 
+    BoundLP(Real *dw, Integer *iw) : tol(1e-10) {
+      holdmem  = false;
+      iwork    = NULL;
+      dwork    = NULL;
+      phaseOne = true;
+      degenerate = false;
+
+      dwork = dw;
+      iwork = iw;      
+    }
+
     ~BoundLP() {
       if (holdmem) {
-	if (iwork!=NULL) delete iwork;
-	if (dwork!=NULL) delete dwork;
+	if (iwork!=NULL) delete[] iwork;
+	if (dwork!=NULL) delete[] dwork;
       }
     }
 
@@ -41,29 +52,29 @@ namespace simplex {
       phaseOne   = true;
       degenerate = false;
       // allocate memory if necessary
-      if (size!=sz || m!=ncon) {
-	size = sz;
-	n    = sz + ncon;
-	m    = ncon;
-      
-	if (iwork!=NULL) delete iwork;
-	if (dwork!=NULL) delete dwork;
-	iwork = new Integer[n*3+m];
-	dwork = new Real[n*(m+4)+m];
-
-	pri    = iwork;
-	pci    = pri+n;
-	pstate = pci+m;
-	pkx    = pci+n;
-
-	pA     = dwork;
-	pb     = pA+n*m;
-	pc     = pb+m;
-	pw     = pc+n;
-	plb    = pw+n;
-	pub    = plb+n;
+      if (holdmem and (size!=sz || m!=ncon)) {
+	if (iwork!=NULL) delete[] iwork;
+	if (dwork!=NULL) delete[] dwork;
+	iwork = new Integer[(sz+ncon)*3+ncon];
+	dwork = new Real[(sz+ncon)*(ncon+4)+ncon];
       }
 
+      size = sz;
+      n    = sz + ncon;
+      m    = ncon;
+      
+      pri    = iwork;
+      pci    = pri+n;
+      pstate = pci+m;
+      pkx    = pci+n;
+
+      pA     = dwork;
+      pb     = pA+n*m;
+      pc     = pb+m;
+      pw     = pc+n;
+      plb    = pw+n;
+      pub    = plb+n;
+      
       int pAi = 0;
       int aai = 0;
 
@@ -192,6 +203,7 @@ namespace simplex {
     Integer  *iwork; // = pri(n) + pci(m) + pstate(n) + pkx(n)
     Real     *dwork; // = pA(n*m)  + pb(m)  + pc(n) + pw(n) +  pub(n) + plb(n)
 
+    // whether hold the memory
     bool     holdmem;
   
     const Real  tol;

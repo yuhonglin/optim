@@ -6,3 +6,4 @@
                   lb<= x <=ub
 	       
               
+* Error hunting

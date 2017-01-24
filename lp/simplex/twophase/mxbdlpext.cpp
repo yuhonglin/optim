@@ -6,13 +6,13 @@
 using namespace simplex;
 
 
-// prhs = [c, Aeq, beq, lb, ub]
+// prhs = [c, Aeq, beq, lb, ub, dwork, iwork]
 // plhs = [x, inform]
 void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   if (nlhs<1)
     return;
   
-  if (nrhs<5)
+  if (nrhs<7)
     mexErrMsgTxt("Too few inputs");
 
   int size = max(mxGetM(prhs[0]), mxGetN(prhs[0]));
@@ -29,19 +29,26 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   if (max(mxGetM(prhs[4]), mxGetN(prhs[4]))!=size) {
     mexErrMsgTxt("1st and 5th inputs do not match");
   }
+  if (max(mxGetM(prhs[5]), mxGetN(prhs[5]))<(size+m)*(m+4)+m) {
+    mexErrMsgTxt("dwork (6th input) is not long enough");
+  }
+  if (max(mxGetM(prhs[6]), mxGetN(prhs[6]))<(size+m)*3+m) {
+    mexErrMsgTxt("iwork (7th input) is not long enough");
+  }
 
-  auto * sim = new BoundLP<double, int>();
-  sim->set(size, m, mxGetPr(prhs[0]), mxGetPr(prhs[1]), mxGetPr(prhs[2]),
+  double *dwork = mxGetPr(prhs[5]);
+  int    *iwork = reinterpret_cast<int*> (mxGetPr(prhs[6]));
+  
+  BoundLP<double, int> sim(dwork, iwork);
+  sim.set(size, m, mxGetPr(prhs[0]), mxGetPr(prhs[1]), mxGetPr(prhs[2]),
 	  mxGetPr(prhs[3]), mxGetPr(prhs[4]));
 
   plhs[0] = mxCreateDoubleMatrix(size,1,mxREAL);
   double obj;
   int inform;
 
-  sim->run(mxGetPr(plhs[0]), obj, inform);
+  sim.run(mxGetPr(plhs[0]), obj, inform);
 
-  delete sim;
-  
   // other output
   if (nlhs>1) {
     plhs[1] = mxCreateDoubleMatrix(1,1,mxREAL);

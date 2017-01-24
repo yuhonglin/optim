@@ -8,6 +8,8 @@
 
 using namespace std;
 
+#include <cstdlib>
+
 namespace simplex {
 
   template<typename Real, typename Integer, bool RowMajor=true>
@@ -23,8 +25,8 @@ namespace simplex {
 
     ~StdLP() {
       if (holdmem) {
-	if (iwork!=NULL) delete iwork;
-	if (dwork!=NULL) delete dwork;
+	if (iwork!=NULL) delete[] iwork;
+	if (dwork!=NULL) delete[] dwork;
       }
     }
 
@@ -38,8 +40,8 @@ namespace simplex {
 	n    = sz + ncon;
 	m    = ncon;
       
-	if (iwork!=NULL) delete iwork;
-	if (dwork!=NULL) delete dwork;
+	if (iwork!=NULL) delete[] iwork;
+	if (dwork!=NULL) delete[] dwork;
 	iwork = new Integer[n+n+m];
 	dwork = new Real[n*(m+2)+m];
 
