@@ -20,7 +20,6 @@ namespace simplex {
       VS_DROP_FROM_LOWER, VS_DROP_FROM_UPPER
     };
     
-    
     BoundLP() : tol(1e-10) {
       holdmem  = true;
       iwork    = NULL;
@@ -262,7 +261,6 @@ namespace simplex {
     bool degenerate;
   
     void pivot(const Integer& ri, const Integer& ci) {
-      //      cout << ri << "," << ci << endl;
       Real ratio;
       // store A(ri,ci) before change the value
       // Arc is used in updating the state
@@ -324,8 +322,6 @@ namespace simplex {
       pri[ci] = ri;
       numPivot++;
 
-      //                  dump(string("Pivot (") + to_string(ri) + string(",") \
-      //            	   + to_string(ci) + string(") -------------------------"));
     }
   
     inline Integer getPivotCol() const {
@@ -393,8 +389,6 @@ namespace simplex {
 	      value -= A(i,j)*ub(j);
 	  }
 
-	  //	  cout << "value : " << lb(pci[i]) << " < " << value << " < " << ub(pci[i]) << endl;
-	  
 	  if (pstate[ci]==VS_LOWER) {
 	    // x[ci] is going to increase
 	    if (gt0(A(pAi))) {
@@ -415,7 +409,6 @@ namespace simplex {
 	      // so the corresponding basic solution
 	      // is going to increase
 	      abschg = (ub(pci[i])-value)/A(pAi);
-	      //	      cout << abschg << "aaaaaaaaaaaaa" <<ub(pci[i])<< "aaaaaa" << value << endl;
 	    } else {
 	      // A(i,ci)*x[ci] is going to increase
 	      // so the corresponding basic solution
@@ -434,10 +427,8 @@ namespace simplex {
 
       if (minabschg>=(ub(ci)-lb(ci))) {
 	// donot do pivot, just change the current state
-	//	cout << ub(ci)-lb(ci) << "," << w(ci) << "," << getObj() << endl;
 	return -1;
       }
-      //      cout << ci << "," << minabschg << "," << minidx << "," << w(ci) << "," << getObj() << endl;
       if (ge0(minabschg))
 	return minidx;
       else
@@ -464,8 +455,6 @@ namespace simplex {
   public:
     void run(Real* x, Real& obj, Integer& inform) {
 
-      //      dump("[Init]-------------------------");
-      
       int ri, ci;
       phaseOne = true;
 
@@ -487,7 +476,6 @@ namespace simplex {
 	      solstate = 1;
 	      break;
 	    } else {
-	      //	      	      	      dump(string("Feasible : ") + to_string(truebw));
 	    }
 	    // Second, detect degeneracy
 	    int i = size;
@@ -567,8 +555,6 @@ namespace simplex {
 	      } else {
 		pstate[ci] = VS_UPPER;
 	      }
-	      //	      dump(string("Pivot (-,") +
-	      //		   to_string(ci) + string(") -------------------------"));
 	      continue;
 	    }
 
